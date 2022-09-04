@@ -8,6 +8,6 @@ docker build . --file Dockerfile --tag firefoxkasm;
 echo "Image build successfully...">>deployFirefox.log;
 
 echo "Deploying Firefox...">>deployFirefox.log;
-docker run -d -p 49154:6901 -e VNC_PW=2022 --restart=always --name firefoxcontainer firefoxkasm;
+docker run -d -p 49154:6901 -e VNC_PW=${{ secrets.KASM_TOKEN }} --restart=always --name firefoxcontainer firefoxkasm;
 echo "Firefox deployment successfull...">>deployFirefox.log;
 exit 0
