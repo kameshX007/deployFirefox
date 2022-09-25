@@ -1,20 +1,15 @@
 #!/bin/sh
 #Checking whether VNC password is passed to script
 vncPassword=$2;
-[ -z "$vncPassword" ] && echo "###Please pass VNC password...!!!">deployFirefox.log && exit 0 || echo "Successfully got VNC password...">deployFirefox.log;
+[ -z "$vncPassword" ] && echo "###Please pass VNC password...!!!" && exit 0 || echo "Successfully got VNC password...";
 
 #Checking & Removing existing container
-echo "Checking if Firefox already deployed...">>deployFirefox.log;
-container=$(docker ps -q --filter ancestor=firefoxkasm )>>deployFirefox.log;
-[ -z "$container" ] && echo "No running container found">>deployFirefox.log || docker rm -f $container;
-
-#Building image
-echo "Building firefox image...">>deployFirefox.log;
-docker build . --file Dockerfile --tag firefoxkasm;
-echo "Image build successfully...">>deployFirefox.log;
+echo "Checking if Firefox already deployed...";
+container=$(docker ps -q --filter ancestor=kasmweb/firefox:1.11.0 );
+[ -z "$container" ] && echo "No running container found" || docker rm -f $container;
 
 #Deploying container
-echo "Deploying Firefox...">>deployFirefox.log;
-docker run -d -p 49151:6901 -e VNC_PW=$vncPassword --restart=always --name firefoxcontainer firefoxkasm;
-echo "Firefox deployment successfull...">>deployFirefox.log;
+echo "Deploying Firefox...";
+docker run -d -p 6901:6901 -e VNC_PW=$vncPassword --network tunnel --restart=always -v /home/$dockerUser/docker/CoadingWS/kasm-user:/home/kasm-user --name firefoxcontainer kasmweb/firefox:1.11.0;
+echo "Firefox deployment successfull...";
 exit 0
